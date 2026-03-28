@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from Users.Usersapi.throttling import LoginThrottle
 from rest_framework import viewsets
 from rest_framework import generics
 from django.contrib.auth.models import User
@@ -6,6 +7,8 @@ from Users.Usersapi.serializers import RegistrationSerializer, UserSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from Users.Usersapi.permissions import LogoutPermission, UserModify
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.tokens import RefreshToken
 # Create your views here.
 class UserViewSet(APIView):
     permission_classes = [UserModify]
@@ -33,3 +36,16 @@ class LogoutView(APIView):
     def post(self, request):
         request.user.auth_token.delete()
         return Response({"message": "Logged out successfully."})
+    
+class LoginView(APIView):
+    throttle_classes = [LoginThrottle]
+    def post(self, request):
+        user=User.objects.filter(username=request.data.get("username")).first()
+        if user is None or not user.check_password(request.data.get("password")):
+            return Response({"error": "Invalid credentials"}, status=401)
+        token = RefreshToken.for_user(user)
+        data={
+            "refresh": str(token),
+            "access": str(token.access_token)
+        }
+        return Response(data, status=200)

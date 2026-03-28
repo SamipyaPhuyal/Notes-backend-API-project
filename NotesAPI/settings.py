@@ -128,7 +128,8 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_THROTTLE_RATES':{
-       'note_uploads':'5/day',
+       'note_uploads':'1/day',
+       'login_attempts':'5/hour',
         
     }
 }
@@ -136,4 +137,16 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=120),
     'AUTH_HEADER_TYPES': ('Bearer',),
+}
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'JWT Authorization header using the Bearer scheme. Example: "Bearer <token>"',
+        }
+    },
+    'DEFAULT_INFO': 'NotesAPI.urls.schema_view',
+    'USE_SESSION_AUTH': False,  # 🔹 important to hide Basic Auth
 }

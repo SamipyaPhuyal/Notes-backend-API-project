@@ -1,7 +1,7 @@
 from urllib import request
 
 from django.shortcuts import render
-from Notes.notesapi.permissions import LikePermission, NoteModify
+from Notes.notesapi.permissions import LikePermission, NoteCreatePermission, NoteModify
 from Notes.notesapi.throttling import NoteUploadThrottle
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -11,8 +11,8 @@ from .models import Note
 from Notes.notesapi.serializers import NotesSerializer
 
 class NotesViewSet(generics.ListCreateAPIView):
-    throttle_scope = 'note_uploads'
     throttle_classes = [NoteUploadThrottle]
+    permission_classes = [NoteCreatePermission]
     queryset = Note.objects.all()
     serializer_class = NotesSerializer
     def perform_create(self, serializer):

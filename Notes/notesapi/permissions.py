@@ -11,3 +11,8 @@ class LikePermission(permissions.BasePermission):
             return request.user.is_authenticated and (obj.liked_by != request.user)
         elif request.method == 'DELETE':
             return request.user.is_authenticated and (obj.liked_by == request.user)
+class NoteCreatePermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method == 'POST':
+            return request.user.is_authenticated
+        return True
