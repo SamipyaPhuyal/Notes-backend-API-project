@@ -3,6 +3,8 @@ from urllib import request
 from django.shortcuts import render
 from Notes.notesapi.permissions import NoteModify
 from rest_framework import viewsets
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework import generics
 from .models import Note
 from Notes.notesapi.serializers import NotesSerializer
@@ -21,5 +23,14 @@ class NoteDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = NotesSerializer
     permission_classes = [NoteModify]
     
-        
-    
+class NotesLikeViewSet(APIView):
+    def post(self, request, pk):
+        note = Note.objects.get(pk=pk)
+        note.liked_by.add(request.user)
+        note.save()
+        return Response({"message": "Note liked successfully."})
+    def delete(self, request, pk):
+        note = Note.objects.get(pk=pk)
+        note.liked_by.remove(request.user)
+        note.save()
+        return Response({"message": "Note unliked successfully."})

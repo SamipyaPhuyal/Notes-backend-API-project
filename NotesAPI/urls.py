@@ -18,9 +18,11 @@ from django.contrib import admin
 from django.urls import include, path
 from Notes import urls as note_urls
 from Users import urls as user_urls
-
+from Dashboard import urls as dashboard_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('notes/', include(note_urls)),
-    path('users/', include(user_urls)),
+    path('api/notes/', include(note_urls)),
+    path('api/users/', include(user_urls)),
+    path('api/dashboard/', include(dashboard_urls)),
 ]
+

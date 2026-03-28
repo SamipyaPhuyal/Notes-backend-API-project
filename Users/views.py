@@ -27,3 +27,8 @@ class RegistrationView(APIView):
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
+class LogoutView(APIView):
+    def post(self, request):
+        request.user.auth_token.delete()
+        return Response({"message": "Logged out successfully."})
