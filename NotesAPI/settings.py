@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'Notes',
     'Users',
     'Dashboard',
+    'drf_yasg',
     'rest_framework',
 ]
 
@@ -127,7 +128,8 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_THROTTLE_RATES':{
-        'note_uploads':'5/day',
+       'note_uploads':'5/day',
+        
     }
 }
 

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from Users.Usersapi.serializers import RegistrationSerializer, UserSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from Users.Usersapi.permissions import UserModify
+from Users.Usersapi.permissions import LogoutPermission, UserModify
 # Create your views here.
 class UserViewSet(APIView):
     permission_classes = [UserModify]
@@ -29,6 +29,7 @@ class RegistrationView(APIView):
         return Response(serializer.errors, status=400)
 
 class LogoutView(APIView):
+    permission_classes = [LogoutPermission]
     def post(self, request):
         request.user.auth_token.delete()
         return Response({"message": "Logged out successfully."})

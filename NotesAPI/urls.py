@@ -19,10 +19,22 @@ from django.urls import include, path
 from Notes import urls as note_urls
 from Users import urls as user_urls
 from Dashboard import urls as dashboard_urls
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Notes API",
+      default_version='v1',
+      description="API documentation for the Notes API",
+   ),
+   public=True,
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/notes/', include(note_urls)),
     path('api/users/', include(user_urls)),
     path('api/dashboard/', include(dashboard_urls)),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'), 
 ]
 
