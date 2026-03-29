@@ -3,7 +3,7 @@ from Users.Usersapi.throttling import LoginThrottle
 from rest_framework import viewsets
 from rest_framework import generics
 from django.contrib.auth.models import User
-from Users.Usersapi.serializers import RegistrationSerializer, UserSerializer
+from Users.Usersapi.serializers import RegistrationSerializer, UserProfileSerializer, UserSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from Users.Usersapi.permissions import LogoutPermission, UserModify
@@ -49,3 +49,8 @@ class LoginView(APIView):
             "access": str(token.access_token)
         }
         return Response(data, status=200)
+    
+class UserProfileView(APIView):
+    def get(self, request):
+        serializer = UserProfileSerializer(request.user)
+        return Response(serializer.data)

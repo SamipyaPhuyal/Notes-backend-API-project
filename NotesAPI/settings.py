@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'Dashboard',
     'drf_yasg',
     'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -82,10 +83,9 @@ WSGI_APPLICATION = 'NotesAPI.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",  # SQLite file path
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
