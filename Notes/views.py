@@ -1,8 +1,7 @@
 from urllib import request
 from warnings import filters
-
 from django.shortcuts import render
-from Notes.notesapi.permissions import LikePermission, NoteCreatePermission, NoteModify
+from Notes.notesapi.permissions import BookmarkPermission, LikePermission, NoteCreatePermission, NoteModify
 from Notes.notesapi.throttling import NoteUploadThrottle
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -40,3 +39,25 @@ class NotesLikeViewSet(APIView):
         note.liked_by.remove(request.user)
         note.save()
         return Response({"message": "Note unliked successfully."})
+
+class BookmarkViewSet(APIView):
+    permission_classes = [BookmarkPermission]
+    def post(self, request,**kwargs):
+        note = Note.objects.filter(pk=kwargs.get('pk')).first()
+        if note is None:
+            return Response({"error": "Note not found"}, status=404)
+        bookmark= Bookmarks.objects.get_or_create(user=request.user, note=note)
+        if bookmark[1]:
+            return Response({"message": "Note bookmarked successfully."}, status=201)
+        else:
+            return Response({"message":"error"}, status=200)
+    def delete(self, request,**kwargs):
+        note = Note.objects.filter(pk=kwargs.get('pk')).first()
+        if note is None:
+            return Response({"error": "Note not found"}, status=404)
+        bookmark = Bookmarks.objects.filter(user=request.user, note=note).first()
+        if bookmark:
+            bookmark.delete()
+            return Response({"message": "Bookmark Removed successfully."}, status=200)
+        else:
+            return Response({"error": "Bookmark not found"}, status=404)

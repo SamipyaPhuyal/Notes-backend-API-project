@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from Notes.models import Note
 from Users.Usersapi.throttling import LoginThrottle
 from rest_framework import viewsets
 from rest_framework import generics
@@ -54,3 +55,4 @@ class UserProfileView(APIView):
     def get(self, request):
         serializer = UserProfileSerializer(request.user)
         return Response(serializer.data)
+    

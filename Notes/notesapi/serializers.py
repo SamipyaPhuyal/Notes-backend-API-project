@@ -1,12 +1,13 @@
 
 from webbrowser import get
-
 from Notes.models import Note
+from Notes.models import Bookmarks
 from rest_framework import serializers 
+
 class NotesSerializer(serializers.ModelSerializer):
     uploaded_by = serializers.StringRelatedField(source="uploaded_by.username")
     url=serializers.HyperlinkedIdentityField(view_name="notes-detail")
-    liked_by=serializers.SerializerMethodField()
+    liked_by=serializers.SerializerMethodField(read_only=True)
     def get_liked_by(self, obj):
         return [user.username for user in obj.liked_by.all()]
     class Meta:
@@ -16,7 +17,7 @@ class NotesSerializer(serializers.ModelSerializer):
     
 class NotesDetailSerializer(serializers.ModelSerializer):
     uploaded_by = serializers.StringRelatedField(source="uploaded_by.username")
-    liked_by=serializers.SerializerMethodField()
+    liked_by=serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Note
         read_only_fields = ["uploaded_by","url"]
@@ -25,3 +26,10 @@ class NotesDetailSerializer(serializers.ModelSerializer):
     get_liked_by = serializers.SerializerMethodField()
     def get_liked_by(self, obj):
         return [user.username for user in obj.liked_by.all()]
+
+class BookmarkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =Bookmarks
+        fields = ['user', 'note' ]
+        read_only_fields = ['user', 'note']
+        

@@ -14,3 +14,19 @@ class Note(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Bookmarks(models.Model):
+    user=models.ForeignKey("auth.User",on_delete=models.CASCADE)
+    note=models.ForeignKey("Notes.Note",on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ("user","note")
+    
+    def get_user(self,request):
+        user=Bookmarks.objects.filter(user=request.user)
+        if user.exists():
+            return user.first().user.username
+        
+    def get_note(self,request):
+        note=Bookmarks.objects.filter(user=request.user)
+        if note.exists():
+            return note.first().note.title

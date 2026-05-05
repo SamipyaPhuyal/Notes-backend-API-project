@@ -18,9 +18,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
     uploaded_notes = serializers.SerializerMethodField()
     upload_count = serializers.SerializerMethodField()
     likes_received = serializers.SerializerMethodField()
+    bookmarked_notes = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ["id", "username", "liked_notes", "uploaded_notes", "upload_count", "likes_received"]
+        fields = ["id", "username", "liked_notes", "uploaded_notes", "upload_count", "likes_received","bookmarked_notes"]
     def get_upload_count(self, obj):
         return Note.objects.filter(uploaded_by=obj).count()
     def get_liked_notes(self, obj):
@@ -34,7 +35,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
             .aggregate(total_likes=Count('liked_by'))['total_likes']
             or 0
     )
-
+    def get_bookmarked_notes(self, obj):
+        return Bookmarks.objects.filter(user=obj).values_list("note__title", flat=True)
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
@@ -49,5 +51,3 @@ class RegistrationSerializer(serializers.ModelSerializer):
             email=validated_data.get("email")
         )
         return user
-    
-        

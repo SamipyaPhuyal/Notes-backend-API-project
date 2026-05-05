@@ -1,5 +1,6 @@
 from rest_framework import permissions
- 
+from Notes.models import Bookmarks, Note 
+
 class NoteModify(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
@@ -16,3 +17,15 @@ class NoteCreatePermission(permissions.BasePermission):
         if request.method == 'POST':
             return request.user.is_authenticated
         return True
+class BookmarkPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        if request.method == 'POST':
+            note=Note.objects.filter(pk=view.kwargs.get('pk')).first()
+            if note.exists():
+                return request.user.is_authenticated and not Bookmarks.objects.filter(user=request.user, note=note).exists()
+        if request.method == 'DELETE':
+            note=Note.objects.filter(pk=view.kwargs.get('pk')).first()
+            if note.exists():
+                return request.user.is_authenticated and Bookmarks.objects.filter(user=request.user, note=note).exists()    
